@@ -24,24 +24,34 @@ class LoadLastEventRepositorySpy implements LoadLastEventRepository {
   }
 }
 
+// type alias
+type SutOutput = { sut: CheckLastEventStatus, loadLastEventRepository: LoadLastEventRepositorySpy }
+
+const makeSut = (): SutOutput => {
+  const loadLastEventRepository = new LoadLastEventRepositorySpy()
+  const sut = new CheckLastEventStatus(loadLastEventRepository);
+
+  return {
+    sut,
+    loadLastEventRepository
+  }
+}
+
 describe('CheckLastEventStatus', () => {
   it('should get last event data', async () => {
-    const loadLastEventRepository = new LoadLastEventRepositorySpy()
-    const systemUnderTest = new CheckLastEventStatus(loadLastEventRepository);
+    const { sut, loadLastEventRepository } = makeSut();
 
-    await systemUnderTest.perform('any_group_id')
+    await sut.perform('any_group_id')
 
     expect(loadLastEventRepository.groupId).toBe('any_group_id');
     expect(loadLastEventRepository.callsCount).toBe(1);
   });
 
   it('should return status done when group has no event', async () => {
-    const loadLastEventRepository = new LoadLastEventRepositorySpy()
+    const { sut, loadLastEventRepository } = makeSut();
     loadLastEventRepository.output = undefined
 
-    const systemUnderTest = new CheckLastEventStatus(loadLastEventRepository);
-
-    const status = await systemUnderTest.perform('any_group_id')
+    const status = await sut.perform('any_group_id')
 
     expect(status).toBe('done');
   });
