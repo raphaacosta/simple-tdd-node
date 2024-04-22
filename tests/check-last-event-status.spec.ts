@@ -23,9 +23,9 @@ class LoadLastEventRepositoryMock implements LoadLastEventRepository {
 describe('CheckLastEventStatus', () => {
   it('should get last event data', async () => {
     const loadLastEventRepository = new LoadLastEventRepositoryMock()
-    const checkLastEventStatus = new CheckLastEventStatus(loadLastEventRepository);
+    const systemUnderTest = new CheckLastEventStatus(loadLastEventRepository);
 
-    await checkLastEventStatus.perform('any_group_id')
+    await systemUnderTest.perform('any_group_id')
 
     expect(loadLastEventRepository.groupId).toBe('any_group_id');
     expect(loadLastEventRepository.callsCount).toBe(1);
